@@ -1,0 +1,29 @@
+[Unit]
+Description=XPRA session for TilePPrDemoJava
+After=network.target
+
+[Service]
+User=root
+Environment=HOME=/root
+Environment=XDG_RUNTIME_DIR=/run/user/0
+Environment=DISPLAY=:100
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+WorkingDirectory=/home/tiledb/apps/TilePPrDemoJava
+
+ExecStartPre=/bin/rm -rf /run/user/0/xpra/100
+ExecStart=/usr/bin/xpra start :100 --start-child="java -jar /home/tiledb/apps/TilePPrDemoJava/TilePPrDemoJava.jar" --bind-tcp=0.0.0.0:14500 --html=on --exit-with-children --daemon=no
+ExecStop=/usr/bin/xpra stop :100
+ExecStopPost=/bin/rm -rf /run/user/0/xpra/100
+
+Restart=on-failure
+RestartSec=5
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+StandardOutput=append:/home/tiledb/apps/TilePPrDemoJava/xpra-java.log
+StandardError=append:/home/tiledb/apps/TilePPrDemoJava/xpra-java.err
+
+
+[Install]
+WantedBy=multi-user.target
