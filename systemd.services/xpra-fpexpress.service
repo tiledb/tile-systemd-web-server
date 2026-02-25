@@ -5,17 +5,17 @@ After=network.target
 [Service]
 User=tiledb
 Group=tiledb
-WorkingDirectory=/home/tiledb/apps/tile-wjtag/bin
+WorkingDirectory=/home/tiledb/apps/tile-wjtag
 
 Environment=HOME=/home/tiledb
-Environment=XDG_RUNTIME_DIR=/run/xpra-vivado
+Environment=XDG_RUNTIME_DIR=/run/xpra-fpexpress
 Environment=DISPLAY=:300
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Environment=_JAVA_AWT_WM_NONREPARENTING=1
 # Force XPRA to find the XKB files
 Environment=XKB_CONFIG_ROOT=/usr/share/X11/xkb
 
-RuntimeDirectory=xpra-vivado
+RuntimeDirectory=xpra-fpexpress
 RuntimeDirectoryMode=0700
 
 # Cleanup any stale X11 locks for display :300
@@ -34,14 +34,14 @@ ExecStart=/usr/bin/dbus-run-session -- /bin/bash -c ' \
     --daemon=no \
     --no-keyboard-sync \
     --keyboard-layout=us \
-    --socket-dir=/run/xpra-vivado'
+    --socket-dir=/run/xpra-fpexpress'
 
-ExecStop=/usr/bin/xpra stop :300 --socket-dir=/run/xpra-vivado
+ExecStop=/usr/bin/xpra stop :300 --socket-dir=/run/xpra-fpexpress
 
 Restart=on-failure
 RestartSec=5
-StandardOutput=append:/home/tiledb/apps/xpra/vivado-xpra.log
-StandardError=append:/home/tiledb/apps/xpra/vivado-xpra.err
+StandardOutput=append:/home/tiledb/apps/xpra/fpexpress-xpra.log
+StandardError=append:/home/tiledb/apps/xpra/fpexpress-xpra.err
 
 [Install]
 WantedBy=multi-user.target
