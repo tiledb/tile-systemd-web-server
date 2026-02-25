@@ -1,0 +1,3 @@
+start_gui
+open_hw_manager
+connect_hw_server -allow_non_jtag

@@ -1,5 +1,5 @@
 [Unit]
-Description=PPrGTH_SC_Log
+Description=Tile Service Panel
 After=network-online.target
 Wants=network-online.target
 
@@ -7,15 +7,15 @@ Wants=network-online.target
 [Service]
 User=root
 Group=root
-WorkingDirectory=/root/apps/tiledb-dataloggers/python3v7/webserver
-ExecStart=/root/apps/tiledb-dataloggers/python3v7/.pyenv/bin/python app.py
+WorkingDirectory=/home/tiledb/apps/tile-systemd-web-server/
+ExecStart=/home/tiledb/apps/tile-systemd-web-server/.pyenv/bin/python /home/tiledb/apps/tile-systemd-web-server/app.py
 Restart=always
 RestartSec=5
 
 # Optional but recommended
 Environment="PYTHONUNBUFFERED=1"
-Environment="VIRTUAL_ENV=/root/apps/tiledb-dataloggers/python3v7"
-Environment="PATH=/root/apps/tiledb-dataloggers/python3v7/bin:/usr/bin"
+Environment="VIRTUAL_ENV=/home/tiledb/apps/tile-systemd-web-server/.pyenv"
+Environment="PATH=/home/tiledb/apps/tile-systemd-web-server/.pyenv/bin:/usr/bin"
 Environment="LD_LIBRARY_PATH=/usr/local/lib"
 
 [Install]

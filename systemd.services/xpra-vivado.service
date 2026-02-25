@@ -1,0 +1,43 @@
+[Unit]
+Description=XPRA session for Vivado
+After=network.target
+
+[Service]
+User=tiledb
+Group=tiledb
+WorkingDirectory=/home/tiledb/
+
+Environment=HOME=/home/tiledb
+Environment=XDG_RUNTIME_DIR=/run/xpra-vivado
+Environment=DISPLAY=:200
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=_JAVA_AWT_WM_NONREPARENTING=1
+# Force XPRA to find the XKB files
+Environment=XKB_CONFIG_ROOT=/usr/share/X11/xkb
+
+RuntimeDirectory=xpra-vivado
+RuntimeDirectoryMode=0700
+
+ExecStartPre=/usr/bin/bash -c '/usr/bin/rm -f /tmp/.X200-lock /tmp/.X11-unix/X200'
+
+# We wrap the command in dbus-run-session and add keyboard-specific flags
+ExecStart=/usr/bin/dbus-run-session -- /bin/bash -c 'source /tools/Xilinx/Vivado_Lab/2022.2/settings64.sh && \
+    /usr/bin/xpra start :200 \
+    --start-child="vivado_lab -source /home/tiledb/apps/tile-systemd-web-server/scripts/xpra_vivado_lab_helper.tcl" \
+    --bind-tcp=0.0.0.0:8082 \
+    --html=on \
+    --exit-with-children=yes \
+    --daemon=no \
+    --no-keyboard-sync \
+    --keyboard-layout=us \
+    --socket-dir=/run/xpra-vivado'
+
+ExecStop=/usr/bin/xpra stop :200 --socket-dir=/run/xpra-vivado
+
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/home/tiledb/apps/xpra/vivado-xpra.log
+StandardError=append:/home/tiledb/apps/xpra/vivado-xpra.err
+
+[Install]
+WantedBy=multi-user.target

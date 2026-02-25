@@ -1,0 +1,47 @@
+[Unit]
+Description=XPRA session for Microsemi FPExpress
+After=network.target
+
+[Service]
+User=tiledb
+Group=tiledb
+WorkingDirectory=/home/tiledb/apps/tile-wjtag/bin
+
+Environment=HOME=/home/tiledb
+Environment=XDG_RUNTIME_DIR=/run/xpra-vivado
+Environment=DISPLAY=:300
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=_JAVA_AWT_WM_NONREPARENTING=1
+# Force XPRA to find the XKB files
+Environment=XKB_CONFIG_ROOT=/usr/share/X11/xkb
+
+RuntimeDirectory=xpra-vivado
+RuntimeDirectoryMode=0700
+
+# Cleanup any stale X11 locks for display :300
+ExecStartPre=/usr/bin/bash -c '/usr/bin/rm -f /tmp/.X300-lock /tmp/.X11-unix/3200'
+
+
+#  script:/home/tiledb/apps/tile-systemd-web-server/scripts/xpra_fpexpress_helper.tcl console_mode:show
+# Execute FPExpress within an XPRA session
+# Nested quotes use \" to survive the systemd-to-bash transition
+ExecStart=/usr/bin/dbus-run-session -- /bin/bash -c ' \
+    /usr/bin/xpra start :300 \
+    --start-child="/microsemi/Libero_SoC_11.10/Libero_SoC/Designer/bin/FPExpress" \
+    --bind-tcp=0.0.0.0:8083 \
+    --html=on \
+    --exit-with-children=yes \
+    --daemon=no \
+    --no-keyboard-sync \
+    --keyboard-layout=us \
+    --socket-dir=/run/xpra-vivado'
+
+ExecStop=/usr/bin/xpra stop :300 --socket-dir=/run/xpra-vivado
+
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/home/tiledb/apps/xpra/vivado-xpra.log
+StandardError=append:/home/tiledb/apps/xpra/vivado-xpra.err
+
+[Install]
+WantedBy=multi-user.target

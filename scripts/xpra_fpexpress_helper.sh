@@ -1,0 +1,1 @@
+/microsemi/Libero_SoC_11.10/Libero_SoC/Designer/bin/FPExpress script:/home/tiledb/apps/tile-systemd-web-server/scripts/xpra_fpexpress_helper.tcl console_mode:show
