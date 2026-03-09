@@ -1,0 +1,35 @@
+[Unit]
+Description=XPRA session for Arduino IDE
+After=network.target
+
+[Service]
+Type=simple
+User=tiledb
+WorkingDirectory=/home/tiledb/apps/tile-db-oven/bin
+
+Environment=DISPLAY=:100
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=HOME=/home/tiledb
+Environment=APPIMAGELAUNCHER_DISABLE=1
+
+ExecStartPre=-/usr/bin/xpra stop :100
+ExecStartPre=/bin/rm -rf /run/user/1000/xpra/:100
+
+ExecStart=/usr/bin/xpra start :100 \
+  --bind-tcp=0.0.0.0:14500 \
+  --html=on \
+  --daemon=no \
+  --notifications=no \
+  --start-child="dbus-run-session sh -c 'openbox & /home/tiledb/apps/tile-db-oven/bin/arduino-ide_2.3.8_Linux_64bit.AppImage --no-sandbox --disable-gpu'"
+
+ExecStop=/usr/bin/xpra stop :100
+
+Restart=on-failure
+RestartSec=5
+KillMode=control-group
+
+StandardOutput=append:/home/tiledb/apps/tile-db-oven/bin/arduino-xpra.log
+StandardError=append:/home/tiledb/apps/tile-db-oven/bin/arduino-xpra.err
+
+[Install]
+WantedBy=multi-user.target
