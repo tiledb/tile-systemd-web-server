@@ -1,0 +1,22 @@
+[Unit]
+Description=Tile Oven Control WebApp
+After=network-online.target
+Wants=network-online.target
+
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/home/tiledb/apps/tile-db-oven/webapp
+ExecStart=/home/tiledb/apps/tile-db-oven/.pyenv/bin/python /home/tiledb/apps/tile-db-oven/webapp/app.py
+Restart=always
+RestartSec=5
+
+# Optional but recommended
+Environment="PYTHONUNBUFFERED=1"
+Environment="VIRTUAL_ENV=/home/tiledb/apps/tile-db-oven/.pyenv"
+Environment="PATH=/home/tiledb/apps/tile-db-oven/.pyenv/bin:/usr/bin"
+Environment="LD_LIBRARY_PATH=/usr/local/lib"
+
+[Install]
+WantedBy=multi-user.target
